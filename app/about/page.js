@@ -1,7 +1,9 @@
 import React from "react";
+import AuthGuard from "../components/AuthGuard";
 
 const About = () => {
   return (
+    <AuthGuard>
     <main className="min-h-screen pt-16 bg-gray-50 text-gray-800 px-6 py-12">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-6 text-blue-900">About Veteran Portal</h1>
@@ -41,6 +43,7 @@ const About = () => {
         </div>
       </div>
     </main>
+    </AuthGuard>
   );
 };
 

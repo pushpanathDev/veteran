@@ -1,11 +1,12 @@
-import Image from "next/image";
-import styles from "./page.module.css";
-import Navbar from "./components/navbar/page";
+import AuthGuard from "./components/AuthGuard";
+import Dashboard from "./components/dashboard/page";
+
 export default function Home() {
   return (
-    <>
-    <h1>Home</h1>
-    
-    </>
+    <AuthGuard>
+      <div className="p-8">
+        <Dashboard />
+      </div>
+    </AuthGuard>
   );
 }
