@@ -1,6 +1,6 @@
 // app/layout.js
 import "./globals.css";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthContextProvider } from "./context/AuthContext";
 import Navbar from "./components/navbar/page";
 import ClientLayout from "./components/ClientLayout"; // ✅ new Client Component!
 
@@ -13,9 +13,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <AuthProvider>
+        <AuthContextProvider>
           <ClientLayout>{children}</ClientLayout>
-        </AuthProvider>
+        </AuthContextProvider>
       </body>
     </html>
   );

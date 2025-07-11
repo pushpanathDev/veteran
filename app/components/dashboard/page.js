@@ -65,7 +65,7 @@ export default function Dashboard() {
           <p className="text-gray-600 mb-4">
             Update your personal details, documents and contact information.
           </p>
-          <button className="px-4 py-2 rounded-full bg-cyan-600 text-white font-semibold hover:bg-cyan-700 transition-colors">
+          <button onClick={() => { window.location.href = "/profile"; }} className="px-4 py-2 rounded-full bg-cyan-600 text-white font-semibold hover:bg-cyan-700 transition-colors">
             Manage Profile
           </button>
         </motion.div>
