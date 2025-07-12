@@ -1,1 +1,32 @@
 @import "tailwindcss";
+
+@keyframes wave1 {
+  0% { background: #EB4335; width: 0; height: 0; opacity: 1; }
+  50% { background: #EB4335; width: 500px; height: 500px; opacity: 1; }
+  100% { background: #EB4335; width: 500px; height: 500px; opacity: 1; }
+}
+
+@keyframes wave2 {
+  0% { background: #4285F4; width: 0; height: 0; opacity: 1; }
+  50% { background: #4285F4; width: 500px; height: 500px; opacity: 1; }
+  100% { background: #4285F4; width: 500px; height: 500px; opacity: 1; }
+}
+
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideDown {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+
+.group-hover\:animate-wave1:hover { animation: wave1 2s forwards; z-index: 1; }
+.group-hover\:animate-wave2:hover { animation: wave2 2s forwards; z-index: 2; }
