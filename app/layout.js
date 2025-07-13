@@ -1,8 +1,7 @@
-// app/layout.js
+// ✅ app/layout.js
 import "./globals.css";
 import { AuthContextProvider } from "./context/AuthContext";
 import Navbar from "./components/navbar/page";
-import ClientLayout from "./components/ClientLayout"; // ✅ new Client Component!
 
 export const metadata = {
   title: "Veteran App",
@@ -14,7 +13,8 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <AuthContextProvider>
-          <ClientLayout>{children}</ClientLayout>
+          <Navbar /> {/* ✅ ALWAYS rendered */}
+          <main className="pt-16">{children}</main>
         </AuthContextProvider>
       </body>
     </html>
