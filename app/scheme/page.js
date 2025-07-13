@@ -16,7 +16,7 @@ export default function Scheme() {
   useEffect(() => {
     async function fetchSchemes() {
       try {
-        const data = await api.get("/items");
+        const data = await api.get("/scheme");
         setSchemes(data);
         setStatus(`Fetched ${data.length} schemes ✅`);
         console.log(data);

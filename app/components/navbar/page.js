@@ -10,7 +10,7 @@ const Navbar = () => {
   const [isClick, setIsClick] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
-  const { user, loading } = useAuth(); // ✅ make sure you get `loading` too!
+  const { user, loading } = useAuth();
 
   const toggleNavbar = () => setIsClick(!isClick);
   const toggleProfile = () => setProfileOpen(!profileOpen);
@@ -23,18 +23,17 @@ const Navbar = () => {
     }
   };
 
-  // ✅ IF still loading, don’t show any nav links yet
-  let navItems = [];
-  if (!loading) {
-    navItems = user
-      ? [
-          { name: "Home", href: "/" },
-          { name: "About", href: "/about" },
-          { name: "Pension", href: "/pension" },
-          { name: "Scheme", href: "/scheme" },
-        ]
-      : [];
-  }
+  // ✅ Always assume user is logged in until you *know* otherwise
+  const isLoggedIn = user || loading;
+
+  const navItems = isLoggedIn
+    ? [
+        { name: "Home", href: "/" },
+        { name: "About", href: "/about" },
+        { name: "Pension", href: "/pension" },
+        { name: "Scheme", href: "/scheme" },
+      ]
+    : [];
 
   return (
     <nav className="bg-white border-b border-gray-200 shadow fixed top-0 left-0 w-full z-50">
@@ -45,7 +44,7 @@ const Navbar = () => {
           </Link>
 
           <div className="hidden md:flex items-center space-x-4">
-            {!loading && navItems.map((item) => (
+            {navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
@@ -55,15 +54,15 @@ const Navbar = () => {
               </Link>
             ))}
 
-            {!loading && (user ? (
+            {isLoggedIn ? (
               <div className="relative">
                 <button
                   onClick={toggleProfile}
                   className="flex items-center focus:outline-none"
                 >
                   <img
-                    src={user.photoURL || "/default-avatar.png"}
-                    alt={`${user.displayName || "User"} profile`}
+                    src={user?.photoURL || "/default-avatar.png"}
+                    alt={`${user?.displayName || "User"} profile`}
                     className="w-8 h-8 rounded-full border-2 border-blue-500 shadow-lg"
                   />
                 </button>
@@ -73,17 +72,17 @@ const Navbar = () => {
                     <div className="px-6 py-5 border-b border-blue-200">
                       <div className="flex items-center gap-4">
                         <img
-                          src={user.photoURL || "/default-avatar.png"}
-                          alt={`${user.displayName || "User"} profile`}
+                          src={user?.photoURL || "/default-avatar.png"}
+                          alt={`${user?.displayName || "User"} profile`}
                           className="w-12 h-12 rounded-full border-2 border-blue-400 shadow-md"
                         />
                         <div>
                           <p className="text-xs text-gray-500">Signed in as</p>
                           <p className="font-semibold text-blue-900">
-                            {user.displayName}
+                            {user?.displayName || "Loading..."}
                           </p>
                           <p className="text-xs text-gray-400">
-                            {user.email}
+                            {user?.email || ""}
                           </p>
                         </div>
                       </div>
@@ -98,15 +97,13 @@ const Navbar = () => {
                 )}
               </div>
             ) : (
-              !loading && (
-                <Link
-                  href="/login"
-                  className="text-blue-900 font-medium hover:underline"
-                >
-                  Login
-                </Link>
-              )
-            ))}
+              <Link
+                href="/login"
+                className="text-blue-900 font-medium hover:underline"
+              >
+                Login
+              </Link>
+            )}
           </div>
 
           <div className="md:hidden flex items-center">
@@ -149,7 +146,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {isClick && !loading && (
+      {isClick && (
         <div className="md:hidden bg-gradient-to-br from-white via-blue-50 to-blue-100 border-t border-gray-200 shadow animate-slideDown backdrop-blur-md">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {navItems.map((item) => (
@@ -165,18 +162,18 @@ const Navbar = () => {
               </Link>
             ))}
 
-            {user ? (
+            {isLoggedIn ? (
               <div className="border-t border-blue-200 pt-3 px-3">
                 <div className="flex items-center gap-3 mb-3">
                   <img
-                    src={user.photoURL || "/default-avatar.png"}
-                    alt={`${user.displayName || "User"} profile`}
+                    src={user?.photoURL || "/default-avatar.png"}
+                    alt={`${user?.displayName || "User"} profile`}
                     className="w-10 h-10 rounded-full border-2 border-blue-400 shadow"
                   />
                   <div>
                     <p className="text-xs text-gray-500">Signed in as</p>
                     <p className="font-semibold text-blue-900">
-                      {user.displayName}
+                      {user?.displayName || "Loading..."}
                     </p>
                   </div>
                 </div>
@@ -204,4 +201,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-  
