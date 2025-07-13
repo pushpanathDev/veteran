@@ -2,9 +2,11 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import AuthGuard from "../AuthGuard";
 
 export default function Dashboard() {
   return (
+    <AuthGuard>
     <main className="min-h-screen px-6 py-20 bg-gradient-to-br from-sky-100 via-cyan-100 to-teal-100">
       {/* Hero Section */}
       <motion.div
@@ -37,7 +39,7 @@ export default function Dashboard() {
           <p className="text-gray-600 mb-4">
             View and manage your pension status and related documents.
           </p>
-          <button className="px-4 py-2 rounded-full bg-teal-600 text-white font-semibold hover:bg-teal-700 transition-colors">
+          <button onClick={() => { window.location.href = "/pension"; }} className="px-4 py-2 rounded-full bg-teal-600 text-white font-semibold hover:bg-teal-700 transition-colors">
             View Pension
           </button>
         </motion.div>
@@ -51,7 +53,7 @@ export default function Dashboard() {
           <p className="text-gray-600 mb-4">
             Explore government schemes specially curated for veterans.
           </p>
-          <button className="px-4 py-2 rounded-full bg-sky-600 text-white font-semibold hover:bg-sky-700 transition-colors">
+          <button onClick={() => { window.location.href = "/scheme"; }} className="px-4 py-2 rounded-full bg-sky-600 text-white font-semibold hover:bg-sky-700 transition-colors">
             Explore Schemes
           </button>
         </motion.div>
@@ -81,5 +83,6 @@ export default function Dashboard() {
         🇮🇳 Proudly serving our veterans. Thank you for your service!
       </motion.footer>
     </main>
+    </AuthGuard>
   );
 }
