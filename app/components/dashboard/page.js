@@ -16,7 +16,7 @@ export default function Dashboard() {
         className="max-w-5xl mx-auto text-center"
       >
         <h1 className="text-4xl md:text-5xl font-extrabold text-teal-900 mb-4">
-          Welcome to Your Veteran Dashboard
+          Welcome to Veteran Portal
         </h1>
         <p className="text-gray-700 max-w-xl mx-auto mb-8">
           Here you can manage your pension, schemes, profile and stay updated with the latest announcements.

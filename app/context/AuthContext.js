@@ -1,5 +1,6 @@
 // app/context/AuthContext.js
 "use client";
+
 import { createContext, useContext, useState, useEffect } from "react";
 import {
   signInWithPopup,
@@ -9,7 +10,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "../../lib/firebase";
+import { auth, db } from "../../lib/firebase";
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 
 const AuthContext = createContext();
 
@@ -26,8 +28,18 @@ export const AuthContextProvider = ({ children }) => {
     return signInWithEmailAndPassword(auth, email, password);
   };
 
-  const signUpWithEmailPassword = (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
+  // ✅ Takes name during sign up
+  const signUpWithEmailPassword = async (name, email, password) => {
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+
+    // ✅ Write to Firestore immediately
+    const userRef = doc(db, "users", result.user.uid);
+    await setDoc(userRef, {
+      name: name,
+      email: email
+    });
+
+    console.log("✅ New user registered & saved with name:", name);
   };
 
   const logOut = () => {
@@ -35,15 +47,33 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser || null);
+
+      if (currentUser) {
+        try {
+          const userRef = doc(db, "users", currentUser.uid);
+          const userSnap = await getDoc(userRef);
+
+          if (!userSnap.exists()) {
+            // ✅ Fallback: Google user auto add
+            await setDoc(userRef, {
+              name: currentUser.displayName || "",
+              email: currentUser.email || ""
+            });
+            console.log("✅ Google user added to Firestore");
+          }
+        } catch (err) {
+          console.error("❌ Firestore error:", err);
+        }
+      }
+
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
-  // ✅ Idle timeout logic — fully safe with loading state
   useEffect(() => {
     let idleTimer;
 
@@ -52,7 +82,7 @@ export const AuthContextProvider = ({ children }) => {
       idleTimer = setTimeout(() => {
         console.log("⏰ Auto sign-out due to 3 min inactivity");
         signOut(auth);
-      }, 3 * 60 * 1000); // 5 minutes
+      }, 3 * 60 * 1000);
     };
 
     const activityEvents = [
@@ -76,7 +106,7 @@ export const AuthContextProvider = ({ children }) => {
         window.removeEventListener(event, resetIdleTimer)
       );
     };
-  }, [user, loading]); // ✅ depend on loading too!
+  }, [user, loading]);
 
   return (
     <AuthContext.Provider
@@ -95,3 +125,6 @@ export const AuthContextProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+
+
+

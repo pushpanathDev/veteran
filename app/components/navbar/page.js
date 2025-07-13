@@ -1,16 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/app/context/AuthContext";
 import { signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 const Navbar = () => {
   const [isClick, setIsClick] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
   const { user, loading } = useAuth();
+  const [userName, setUserName] = useState(""); // ✅ Local state for user's name
 
   const toggleNavbar = () => setIsClick(!isClick);
   const toggleProfile = () => setProfileOpen(!profileOpen);
@@ -23,7 +25,24 @@ const Navbar = () => {
     }
   };
 
-  // ✅ Always assume user is logged in until you *know* otherwise
+  // ✅ Get name from Firestore (or fallback to displayName)
+  useEffect(() => {
+    const fetchUserName = async () => {
+      if (user) {
+        try {
+          const userRef = doc(db, "users", user.uid);
+          const userSnap = await getDoc(userRef);
+          const nameFromDB = userSnap.exists() ? userSnap.data().name : "";
+          setUserName(nameFromDB || user.displayName || "");
+        } catch (err) {
+          console.error("❌ Failed to fetch Firestore user:", err);
+        }
+      }
+    };
+
+    fetchUserName();
+  }, [user]);
+
   const isLoggedIn = user || loading;
 
   const navItems = isLoggedIn
@@ -62,7 +81,7 @@ const Navbar = () => {
                 >
                   <img
                     src={user?.photoURL || "/default-avatar.png"}
-                    alt={`${user?.displayName || "User"} profile`}
+                    alt={`${userName || "User"} profile`}
                     className="w-8 h-8 rounded-full border-2 border-blue-500 shadow-lg"
                   />
                 </button>
@@ -73,13 +92,13 @@ const Navbar = () => {
                       <div className="flex items-center gap-4">
                         <img
                           src={user?.photoURL || "/default-avatar.png"}
-                          alt={`${user?.displayName || "User"} profile`}
+                          alt={`${userName || "User"} profile`}
                           className="w-12 h-12 rounded-full border-2 border-blue-400 shadow-md"
                         />
                         <div>
                           <p className="text-xs text-gray-500">Signed in as</p>
                           <p className="font-semibold text-blue-900">
-                            {user?.displayName || "Loading..."}
+                            {userName || "Loading..."}
                           </p>
                           <p className="text-xs text-gray-400">
                             {user?.email || ""}
@@ -166,14 +185,15 @@ const Navbar = () => {
               <div className="border-t border-blue-200 pt-3 px-3">
                 <div className="flex items-center gap-3 mb-3">
                   <img
-                    src={user?.photoURL || "/default-avatar.png"}
-                    alt={`${user?.displayName || "User"} profile`}
+                    src={user?.photoURL || "/default-avatar.jpg"}
+                    alt={`${userName || "User"} profile`}
                     className="w-10 h-10 rounded-full border-2 border-blue-400 shadow"
                   />
+
                   <div>
                     <p className="text-xs text-gray-500">Signed in as</p>
                     <p className="font-semibold text-blue-900">
-                      {user?.displayName || "Loading..."}
+                      {userName || "Loading..."}
                     </p>
                   </div>
                 </div>
